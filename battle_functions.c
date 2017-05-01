@@ -1,4 +1,7 @@
 #include "header.h"
+
+int Y_PC_SHOT;
+int X_PC_SHOT;
 //*************************************
 bool getPlayerShot(int PCfield[][SIZE], FLEET * PCships){
 	int y = 0;
@@ -90,20 +93,48 @@ int gameMonitor( FLEET * playerShips, FLEET * PCships){
 }
 
 //******************************
-bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips){         //<<<<<--------------- NEED  TO ADD SHOT LOGIC -----------------------
-	int y, x;
-	int hit = 0;
+bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips,int shotByShot){ 
+	int guessDirection = 0;
 	puts("PC makes shot!");
 	while (true){
-		y = rand() % 10;
-		x = rand() % 10;
-		if (lookForHit(playerField, PlayerShips, y, x) == 1){
-			playerField[y][x] =100;
+		if (shotByShot < 1){
+			Y_PC_SHOT = rand() % 10;
+			X_PC_SHOT = rand() % 10;
+		}
+		else{
+			guessDirection = (rand() % 4) + 1;
+			switch (guessDirection)
+			{
+			case 1:   //top 
+			{
+				Y_PC_SHOT--;
+				break;
+			}
+			case 2:  //right
+			{
+				X_PC_SHOT++;
+				break;
+			}
+			case 3:   //down
+			{
+				Y_PC_SHOT++;
+				break;
+			}
+			case 4:   //  left
+			{
+				X_PC_SHOT--;
+				break;
+			}
+			}
+		}
+	
+		if (lookForHit(playerField, PlayerShips, Y_PC_SHOT, X_PC_SHOT) == 1){
+			playerField[Y_PC_SHOT][X_PC_SHOT] =100;
 			puts("PC HIT!\n");
 			break;
 		}
-		else if (lookForHit(playerField, PlayerShips, y, x) == 0){
-			playerField[y][x] = 5;
+		else if (lookForHit(playerField, PlayerShips, Y_PC_SHOT, X_PC_SHOT) == 0){
+			playerField[Y_PC_SHOT][X_PC_SHOT] = 5;
 			puts("PC MISS!\n");
 			return false;
 		}

@@ -1,4 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -44,7 +45,7 @@ int turnInInt(char symb);
 
 bool getPlayerShot(int PCfield[][SIZE], FLEET * PCships);
 
-bool getPCshot(int playerFied[][SIZE], FLEET * PlayerShips);
+bool getPCshot(int playerFied[][SIZE], FLEET * PlayerShips,int shotByShot);
 
 int lookForHit(int field[][SIZE], FLEET * ships,int y,int x);
 

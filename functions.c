@@ -36,8 +36,6 @@ void playerShipsAutoPlacing(int field[][SIZE],FLEET * playerFleet){
 		}
 	  }
 	}
-
-	return;
 }
 //*******************************************
 void shipPlace(int deck_count,int field[][SIZE],FLEET * currentFleet,int shipID){
@@ -155,7 +153,6 @@ void shipPlace(int deck_count,int field[][SIZE],FLEET * currentFleet,int shipID)
 			}
 		}
 	}
-	return;
 }
 //***********************************************
 bool collisionDetection( int field[][SIZE], int deck_quantity, int direction, int y, int x){
@@ -245,7 +242,6 @@ void PCshipsPlacing(int field[][SIZE],FLEET * PCfleet){
 		}
 		}
 	}
-	return;
 }
 //***********************************
 void playerShipsHandlePlacing(int field[][SIZE],FLEET * playerFleet,int PCfield[][SIZE]){
@@ -404,7 +400,6 @@ void playerShipsHandlePlacing(int field[][SIZE],FLEET * playerFleet,int PCfield[
 		} while (!handleShipPlace(1, field, playerFleet, -1, i));
 		displayPole(PCfield, field, 0);
 	}
-	return;
 }
 //*********************************
 bool handleShipPlace(int deck_count,int field[][SIZE], FLEET * currentFleet, int direction,int shipID){ 
@@ -582,6 +577,4 @@ void displayPole(int PC_field[][SIZE], int player_field[][SIZE],int mode){
 		printf("\n");
 	}
 	printf("\n\n");
-	
-	return;
 }

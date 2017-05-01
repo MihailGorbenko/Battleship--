@@ -69,16 +69,20 @@ int main(){
 
 	switch (autoPlacing){
 	case true:
-	{
+	{ 
+		
+		
 		playerShipsAutoPlacing(player_field, playerShips);
 		PCshipsPlacing(PC_field, PCships);
 		displayPole(PC_field, player_field, 1);
 		while (gameMonitor(playerShips, PCships)){
+			int shotByShot = 0;                    // if > than one to try to guess next deck of this ship
 			while (getPlayerShot(PC_field, PCships)){
 				displayPole(PC_field, player_field, 1);
 			}
-			while (getPCshot(player_field, playerShips)){
+			while (getPCshot(player_field, playerShips,shotByShot)){
 				displayPole(PC_field, player_field, 1);
+				shotByShot++;
 			}	
 			displayPole(PC_field, player_field, 1);
 		}
@@ -91,11 +95,13 @@ int main(){
 		puts("Let's go!\n");
 		displayPole(PC_field, player_field,1);
 		while (gameMonitor( playerShips, PCships)){
+			int shotByShot = 0;
 			while (getPlayerShot(PC_field, PCships)){
 				displayPole(PC_field, player_field, 1);
 			}
-			while (getPCshot(player_field, playerShips)){
+			while (getPCshot(player_field, playerShips,shotByShot)){
 				displayPole(PC_field, player_field, 1);
+				shotByShot++;
 			}
 			displayPole(PC_field, player_field, 1);
 		} 
