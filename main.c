@@ -5,15 +5,15 @@ int main(){
 	bool autoPlacing = false;
 	int choise = -1;
 	// FIELDS  (100 -- HIT; | 1,2,3,4 -- SHIPS; | 0 -- SEA;)
-	int player_field[Y][X] = { 0 };
-	int PC_field[Y][X] = { 0 };
+	int player_field[_Y_][_X_] = { 0 };
+	int PC_field[_Y_][_X_] = { 0 };
 	//************************
-	FLEET * playerShips, * PCships;
+	FLEET * playerShips, *PCships;
 	FLEET ps, pcs;
 	playerShips = &ps; //player fleet
 	PCships = &pcs; //PC fleet
 	//************************
-    // ships initialization
+	// ships initialization
 	FLEET * allFlets[2] = { playerShips, PCships };
 	for (int i = 0; i < 2; i++){
 		allFlets[i]->fourDeckShip.deck_quantity = 4;
@@ -51,10 +51,15 @@ int main(){
 			}
 		}
 	}
+	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD Position = { 3, 3 };
+	SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
 	puts("_____________________________________________________________________________");
 	puts("___________________________WELCOME TO BATTLESHIP_____________________________");
 	puts("_____________________________________________________________________________");
+	SetConsoleTextAttribute(Console, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
 	puts("Chose the way to place your ships:\n\t$>1-automatically;\n\t$>0-handle;\n");
+	SetConsoleTextAttribute(Console, FOREGROUND_BLUE |FOREGROUND_GREEN|FOREGROUND_RED);
 	//choosing  ship placing type;
 	while (true){
 		scanf("%d", &choise);
@@ -63,50 +68,59 @@ int main(){
 		}
 		else break;
 		while (getchar() != '\n')continue;
-	} 
+	}
 	if (choise == 1) autoPlacing = true;
 	//************************************
-
+	system("cls");
+	
 	switch (autoPlacing){
 	case true:
-	{ 
-		
-		
+	{
 		playerShipsAutoPlacing(player_field, playerShips);
 		PCshipsPlacing(PC_field, PCships);
+		SetConsoleCursorPosition(Console, Position);
 		displayPole(PC_field, player_field, 1);
 		while (gameMonitor(playerShips, PCships)){
 			int shotByShot = 0;                    // if > than one to try to guess next deck of this ship
-			while (getPlayerShot(PC_field, PCships)){
+			while (gameMonitor(playerShips, PCships) && getPlayerShot(PC_field, PCships)){
+				SetConsoleCursorPosition(Console, Position);
 				displayPole(PC_field, player_field, 1);
 			}
-			while (getPCshot(player_field, playerShips,shotByShot)){
+			while (gameMonitor(playerShips, PCships) && getPCshot(player_field, playerShips, shotByShot)){
+				SetConsoleCursorPosition(Console, Position);
 				displayPole(PC_field, player_field, 1);
 				shotByShot++;
-			}	
+			}
+			system("cls");
+			SetConsoleCursorPosition(Console, Position);
 			displayPole(PC_field, player_field, 1);
 		}
 		break;
 	}
 	case false:
 	{
-		playerShipsHandlePlacing(player_field,playerShips,PC_field);
-		PCshipsPlacing(PC_field,PCships);
-		puts("Let's go!\n");
-		displayPole(PC_field, player_field,1);
-		while (gameMonitor( playerShips, PCships)){
+		playerShipsHandlePlacing(player_field, playerShips, PC_field);
+		PCshipsPlacing(PC_field, PCships);
+		SetConsoleCursorPosition(Console, Position);
+		displayPole(PC_field, player_field, 1);
+		while (gameMonitor(playerShips, PCships)){
 			int shotByShot = 0;
-			while (getPlayerShot(PC_field, PCships)){
+			
+			while (gameMonitor(playerShips, PCships) && getPlayerShot(PC_field, PCships)){
+				SetConsoleCursorPosition(Console, Position);
 				displayPole(PC_field, player_field, 1);
 			}
-			while (getPCshot(player_field, playerShips,shotByShot)){
+			while (gameMonitor(playerShips, PCships) && getPCshot(player_field, playerShips, shotByShot)){
+				SetConsoleCursorPosition(Console, Position);
 				displayPole(PC_field, player_field, 1);
 				shotByShot++;
 			}
+			system("cls");
+			SetConsoleCursorPosition(Console, Position);
 			displayPole(PC_field, player_field, 1);
-		} 
+		}
 		break;
-	  }
+	}
 	}
 	return 0;
 }
