@@ -1,48 +1,50 @@
+
 #include "header.h"
 
-int Y_PC_SHOT;
-int X_PC_SHOT;
+int Y_PC_SHOT = 0;
+int X_PC_SHOT = 0;
 //*************************************
 bool getPlayerShot(int PCfield[][SIZE], FLEET * PCships){
 	int y = 0;
 	char x = '\0';
-	puts("\nMake your shot:\n");
-	printf("Enter Y coordinates:(1-10)\n$>");
+	printGameStatus("Make your shot                                                                        ", ACT_MSG);
+	printGameStatus("Enter Y coordinates:(1-10)                                                              >>",NO_ARG);
 	while (true){
-		if (scanf("%d", &y) == 0)puts("\n$> Not valid choise!\n$> Enter again ");
+		if (scanf("%d", &y) == 0) printGameStatus(" Not valid choise! Enter again(1-10)                      ", PLSTAT_MSG);
 		if (y > 10 || y< 1){
-			puts("\n$> Not valid choise!\n$> Enter again ");
+			printGameStatus(" Not valid choise! Enter again(1-10)                                          >> ", PLSTAT_MSG);
 		}
 		else break;
 		while (getchar() != '\n')continue;
 	}
-	printf("Enter X coordinates:(A-J - In upper case)\n$>");
+	printGameStatus("Enter X coordinates:(A-J - In upper case)                                                  >>", NO_ARG);
 	while (getchar() != '\n')continue;
 	while (true){
-		if (scanf("%c", &x) == 0)puts("\n$> Not valid choise!\n$> Enter again ");
+		if (scanf("%c", &x) == 0)printGameStatus(" Not valid choise! Enter again(A-J - In upper case)           ", PLSTAT_MSG);
 		if ((int)x < 65 || (int)x > 74){
-			puts("\n$> Not valid choise!\n$> Enter again ");
+			printGameStatus("Not valid choise! Enter again(A-J - In upper case)                                 ", PLSTAT_MSG);
 		}
 		else break;
 		while (getchar() != '\n')continue;
 	}
-	if (lookForHit(PCfield, PCships, (y - 1), turnInInt(x))==1) {
-		printf("\nYou are hit\n");
+	if (lookForHit(PCfield, PCships, (y - 1), turnInInt(x)) == 1) {
+		printGameStatus("You are HIT                                                                             ", PLSTAT_MSG);
 		PCfield[y - 1][turnInInt(x)] = 100;
+		
 	}
 	else if (lookForHit(PCfield, PCships, (y - 1), turnInInt(x)) == 0){
-		puts("\nMISS\n");
+		printGameStatus("You are MISS                                                                             ", PLSTAT_MSG);
 		PCfield[y - 1][turnInInt(x)] = 5;
+		
 		return false;
 	}
-	
-	else puts("\nThis coordinates alredy token\n");
-		
+
+	else printGameStatus("This coordinates alredy token                                                            ", PLSTAT_MSG);
+
 	return  true;
 }
 //*******************************
-int gameMonitor( FLEET * playerShips, FLEET * PCships){
-	int shots;
+int gameMonitor(FLEET * playerShips, FLEET * PCships){
 	int  playerShipsAlive = 10;
 	int PCshipsAlive = 10;
 	// check for player ships
@@ -77,25 +79,26 @@ int gameMonitor( FLEET * playerShips, FLEET * PCships){
 			PCshipsAlive--;
 	}
 	//checking for end and winner
-	if (playerShipsAlive == 0 && PCshipsAlive > 0) {
-		printf("\nPC WINS!!!\n");
+	if (playerShipsAlive == 0 && PCshipsAlive == 0){
+		printGameStatus("NOBODY WINS                                              ", PCSTAT_MSG);
 		return false;
 	}
-	else if (playerShipsAlive > 0 && PCshipsAlive == 0){
-		printf("\nPlayer WINS!!!\n");
+	
+	if (PCshipsAlive == 0 && playerShipsAlive > 0){
+		printGameStatus("Player WINS!!!                                           ",PLSTAT_MSG);
 		return false;
 	}
-	else if (playerShipsAlive == 0 && PCshipsAlive == 0){
-		printf("\nNOBODY WINS\n ");
+	 if (playerShipsAlive == 0 && PCshipsAlive > 0) {
+		printGameStatus("PC WINS!!!                                              ", PCSTAT_MSG);
 		return false;
 	}
-	else return true;
+	 return true;
 }
 
 //******************************
-bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips,int shotByShot){ 
+bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips, int shotByShot){
 	int guessDirection = 0;
-	puts("PC makes shot!");
+	printGameStatus("PC makes shot!                                ",ACT_MSG);
 	while (true){
 		if (shotByShot < 1){
 			Y_PC_SHOT = rand() % 10;
@@ -105,37 +108,46 @@ bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips,int shotByShot){
 			guessDirection = (rand() % 4) + 1;
 			switch (guessDirection)
 			{
-			case 1:   //top 
+			case 1:   //top
 			{
-				Y_PC_SHOT--;
+				if (Y_PC_SHOT > 0)
+				       Y_PC_SHOT--;
+				else continue;
 				break;
 			}
 			case 2:  //right
 			{
-				X_PC_SHOT++;
+				if (X_PC_SHOT <9)
+				       X_PC_SHOT++;
+				else continue;
 				break;
 			}
 			case 3:   //down
 			{
-				Y_PC_SHOT++;
+				if (Y_PC_SHOT < 9)
+				        Y_PC_SHOT++;
+				else continue;
 				break;
 			}
 			case 4:   //  left
 			{
-				X_PC_SHOT--;
+				if (X_PC_SHOT >0)
+				        X_PC_SHOT--;
+				else continue;
 				break;
 			}
 			}
 		}
-	
+
 		if (lookForHit(playerField, PlayerShips, Y_PC_SHOT, X_PC_SHOT) == 1){
-			playerField[Y_PC_SHOT][X_PC_SHOT] =100;
-			puts("PC HIT!\n");
+			playerField[Y_PC_SHOT][X_PC_SHOT] = 100;
+			printGameStatus("PC HIT!                                  ",PCSTAT_MSG);
+
 			break;
 		}
 		else if (lookForHit(playerField, PlayerShips, Y_PC_SHOT, X_PC_SHOT) == 0){
 			playerField[Y_PC_SHOT][X_PC_SHOT] = 5;
-			puts("PC MISS!\n");
+			printGameStatus("PC MISS!                                 ", PCSTAT_MSG);
 			return false;
 		}
 		else continue;
@@ -144,20 +156,21 @@ bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips,int shotByShot){
 }
 //****************
 int lookForHit(int field[][SIZE], FLEET * fleet, int y, int x){
-	if (field[y][x] == 100) {                     //already hited	
+	
+	if (field[y][x] == 100) {                     //already hited
 		return -1;
 	}
 	else if (field[y][x] == 4){     //hit four-deck ship
 		fleet->fourDeckShip.live_deck--;
 		if (fleet->fourDeckShip.live_deck <= 0){
 			fleet->fourDeckShip.status = DEATH;
-			printf("\nFour - deck ship death!\n");
+			printGameStatus("Four - deck ship death!             ",KILL_MSG);
 		}
-		 
+
 		return 1;
 	}
-	else if (field[y][x] == 3){  
-		                        //hit 3 - deck ship
+	else if (field[y][x] == 3){
+		//hit 3 - deck ship
 		for (int i = 0; i < 2; i++){
 			int  got = 0;
 			for (int j = 0; j < 4; j++){
@@ -174,16 +187,16 @@ int lookForHit(int field[][SIZE], FLEET * fleet, int y, int x){
 				fleet->threeDeckShip[i].live_deck--;
 				if (fleet->threeDeckShip[i].live_deck <= 0){
 					fleet->threeDeckShip[i].status = DEATH;
-					printf("\nThree - deck ship death!\n");
+					printGameStatus("Three - deck ship death!              ",KILL_MSG);
 				}
-                 
+
 			}
 			else continue;
 		}
 		return 1;
 	}
 	else if (field[y][x] == 2){      //hit 2 - deck ship
-		                      
+
 		for (int i = 0; i < 3; i++){
 			int  got = 0;
 			for (int j = 0; j < 4; j++){
@@ -200,7 +213,7 @@ int lookForHit(int field[][SIZE], FLEET * fleet, int y, int x){
 				fleet->twoDeckShip[i].live_deck--;
 				if (fleet->twoDeckShip[i].live_deck <= 0){
 					fleet->twoDeckShip[i].status = DEATH;
-					printf(" \nTWO-deck ship death!\n");
+					printGameStatus("TWO-deck ship death!                 ",KILL_MSG);
 				}
 			}
 			else continue;
@@ -208,7 +221,7 @@ int lookForHit(int field[][SIZE], FLEET * fleet, int y, int x){
 		return 1;
 	}
 	else if (field[y][x] == 1){      //hit 1 - deck ship
-		                       
+
 		for (int i = 0; i < 4; i++){
 			int  got = 0;
 			for (int j = 0; j < 4; j++){
@@ -225,7 +238,7 @@ int lookForHit(int field[][SIZE], FLEET * fleet, int y, int x){
 				fleet->oneDeckShip[i].live_deck--;
 				if (fleet->oneDeckShip[i].live_deck <= 0){
 					fleet->oneDeckShip[i].status = DEATH;
-					printf("\nOne deck ship death!\n");
+					printGameStatus("One deck ship death!               ",KILL_MSG);
 				}
 			}
 			else continue;

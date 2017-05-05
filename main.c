@@ -5,8 +5,8 @@ int main(){
 	bool autoPlacing = false;
 	int choise = -1;
 	// FIELDS  (100 -- HIT; | 1,2,3,4 -- SHIPS; | 0 -- SEA;)
-	int player_field[_Y_][_X_] = { 0 };
-	int PC_field[_Y_][_X_] = { 0 };
+	int player_field[SIZE][SIZE] = { 0 };
+	int PC_field[SIZE][SIZE] = { 0 };
 	//************************
 	FLEET * playerShips, *PCships;
 	FLEET ps, pcs;
@@ -87,6 +87,7 @@ int main(){
 				displayPole(PC_field, player_field, 1);
 			}
 			while (gameMonitor(playerShips, PCships) && getPCshot(player_field, playerShips, shotByShot)){
+				
 				SetConsoleCursorPosition(Console, Position);
 				displayPole(PC_field, player_field, 1);
 				shotByShot++;
@@ -97,6 +98,7 @@ int main(){
 		}
 		break;
 	}
+	////--------------------------------------------
 	case false:
 	{
 		playerShipsHandlePlacing(player_field, playerShips, PC_field);
