@@ -1,8 +1,7 @@
 
 #include "header.h"
 
-int Y_PC_SHOT = 0;
-int X_PC_SHOT = 0;
+
 //*************************************
 bool getPlayerShot(int PCfield[][SIZE], FLEET * PCships){
 	int y = 0;
@@ -97,14 +96,16 @@ int gameMonitor(FLEET * playerShips, FLEET * PCships){
 
 //******************************
 bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips, int shotByShot){
-	int guessDirection = 0;
+	static int Y_PC_SHOT = 0;
+	static int X_PC_SHOT = 0;
+	static int guessDirection = 0;
 	printGameStatus("PC makes shot!                                ",ACT_MSG);
 	while (true){
-		if (shotByShot < 1){
+		if (shotByShot == 0){                  //if first hit
 			Y_PC_SHOT = rand() % 10;
 			X_PC_SHOT = rand() % 10;
 		}
-		else{
+		else if(shotByShot == 1){                //if second hit by one time
 			guessDirection = (rand() % 4) + 1;
 			switch (guessDirection)
 			{
@@ -133,6 +134,40 @@ bool getPCshot(int playerField[][SIZE], FLEET * PlayerShips, int shotByShot){
 			{
 				if (X_PC_SHOT >0)
 				        X_PC_SHOT--;
+				else continue;
+				break;
+			}
+			}
+		}
+		else                 //if third and fourth hit by one time
+		{
+			switch (guessDirection)
+			{
+			case 1:   //top
+			{
+				if (Y_PC_SHOT > 0)
+					Y_PC_SHOT--;
+				else continue;
+				break;
+			}
+			case 2:  //right
+			{
+				if (X_PC_SHOT <9)
+					X_PC_SHOT++;
+				else continue;
+				break;
+			}
+			case 3:   //down
+			{
+				if (Y_PC_SHOT < 9)
+					Y_PC_SHOT++;
+				else continue;
+				break;
+			}
+			case 4:   //  left
+			{
+				if (X_PC_SHOT >0)
+					X_PC_SHOT--;
 				else continue;
 				break;
 			}
