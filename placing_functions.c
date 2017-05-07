@@ -1,46 +1,12 @@
 #include "header.h"
 
 
-int fieldPoint[2]; // coordinates first deck of ship  1-X;  0-Y;
-//****************************
-void playerShipsAutoPlacing(int field[][SIZE], FLEET * playerFleet){
-	int D3_shipID = 0;
-	int D2_shipID = 0;
-	int D1_shipID = 0;
-	for (int i = 0; i < 10; i++){
-		switch (i){
-		case 0:   //four deck ship (1)
-		{
-			shipPlace(4, field, playerFleet, 0);
-			break;
-		}
-		case 1:
-		case 2: //three deck ship (2)
-		{
-			shipPlace(3, field, playerFleet, D3_shipID);
-			D3_shipID++;
-			break;
-		}
-		case 3:
-		case 4:
-		case 5: // two eck ship (3)
-		{
-			shipPlace(2, field, playerFleet, D2_shipID);
-			D2_shipID++;
-			break;
-		}
-		default: //one deck ship (4)
-		{
-			shipPlace(1, field, playerFleet, D1_shipID);
-			D1_shipID++;
-			break;
-		}
-		}
-	}
-}
 //*******************************************
 void shipPlace(int deck_count , int field[][SIZE], FLEET * currentFleet, int shipID){
-	
+
+	// coordinates first deck of ship i==0 - Y; i==1 - X; 
+	int fieldPoint[2] = { 0 };
+
 	if (deck_count == 4){  //four deck ship without  collision detection
 		int direction = rand() % 2;
 		if (direction == HORISONT){
@@ -210,7 +176,7 @@ bool collisionDetection(int field[][SIZE], int deck_quantity, int direction, int
 }
 
 //*************************************
-void PCshipsPlacing(int field[][SIZE], FLEET * PCfleet){
+void autoShipsPlacing(int field[][SIZE], FLEET * fleet){
 	int D3_shipID = 0;
 	int D2_shipID = 0;
 	int D1_shipID = 0;
@@ -218,13 +184,13 @@ void PCshipsPlacing(int field[][SIZE], FLEET * PCfleet){
 		switch (i){
 		case 0:   //four deck ship (1)
 		{
-			shipPlace(4, field, PCfleet, 0);
+			shipPlace(4, field, fleet, 0);
 			break;
 		}
 		case 1:
 		case 2: //three deck ship (2)
 		{
-			shipPlace(3, field, PCfleet, D3_shipID);
+			shipPlace(3, field, fleet, D3_shipID);
 			D3_shipID++;
 			break;
 		}
@@ -232,13 +198,13 @@ void PCshipsPlacing(int field[][SIZE], FLEET * PCfleet){
 		case 4:
 		case 5: // two eck ship (3)
 		{
-			shipPlace(2, field, PCfleet, D2_shipID);;
+			shipPlace(2, field, fleet, D2_shipID);;
 			D2_shipID++;
 			break;
 		}
 		default: //one deck ship (4)
 		{
-			shipPlace(1, field, PCfleet, D1_shipID);
+			shipPlace(1, field, fleet, D1_shipID);
 			D1_shipID++;
 			break;
 		}
@@ -246,13 +212,18 @@ void PCshipsPlacing(int field[][SIZE], FLEET * PCfleet){
 	}
 }
 //***********************************
-void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfield[][SIZE]){
+void playerShipsManualPlacing(int field[][SIZE], FLEET * playerFleet){
+
 	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD Position = { 3, 3 };
+	// coordinates first deck of ship i==0 - Y; i==1 - X; 
+	int fieldPoint[2] = { 0 };
+
 	int direction;
+
 	//four deck ship placing
 	SetConsoleCursorPosition(Console, Position);
-	displayPole(PCfield, field, 0);
+	displayField(field, field, 0);
 	printGameStatus("Choose direction of four-deck ship: (1--Horisontal; 0--Vertical;)   ", NO_ARG);
 	while (true){
 		scanf("%d", &direction);
@@ -272,7 +243,7 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 			if (y > 10 || y< 1){
 				printGameStatus("$> Not valid choise! Enter again                            ", PLSTAT_MSG);
 			}
-			else if (direction == 0 && y >7)
+			else if (direction == 0 && y > 7)
 				printGameStatus("$> Not valid choise! Enter again                       ", PLSTAT_MSG);
 			else break;
 			while (getchar() != '\n')continue;
@@ -284,17 +255,18 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 			if ((int)x <65 || (int)x>74){
 				printGameStatus("$> Not valid choise! Enter again                        ", PLSTAT_MSG);
 			}
-			else if (direction == 0 && (int)x>72)
+			else if (direction == 1 && (int)x > 71)
 				printGameStatus("$> Not valid choise! Enter again                       ", PLSTAT_MSG);
 			else break;
 			while (getchar() != '\n')continue;
 		}
 		fieldPoint[0] = y - 1;
 		fieldPoint[1] = turnInInt(x);
-	} while (!handleShipPlace(4, field, playerFleet, direction, 0));
+	} while (!manualShipPlace(4, field, playerFleet, direction, 0,fieldPoint));
 	system("cls");
 	SetConsoleCursorPosition(Console, Position);
-	displayPole(PCfield, field, 0);
+	displayField(field, field, 0);
+
 	//three deck ship placing
 	for (int i = 0; i < 2; i++){
 		int y = 0;
@@ -317,37 +289,42 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 				if (y > 10 || y< 1){
 					printGameStatus("$> Not valid choise! Enter again                             ", PLSTAT_MSG);
 				}
+				else if (direction == 0 && y > 8)
+					printGameStatus("$> Not valid choise! Enter again                               ", PLSTAT_MSG);
 				else break;
 				while (getchar() != '\n')continue;
 			}
 			printGameStatus("Enter X coordinates:(A-J - In upper case)                              ",NO_ARG);
 			while (getchar() != '\n')continue;
 			while (true){
-				if (scanf("%c", &x) == 0)printGameStatus("$> Not valid choise! Enter again       ", PLSTAT_MSG);
+				if (scanf("%c", &x) == 0)printGameStatus("$> Not valid choise! Enter again        ", PLSTAT_MSG);
 				if ((int)x < 65 || (int)x > 74){
 					printGameStatus("$> Not valid choise! Enter again                             ", PLSTAT_MSG);
 				}
+				else if (direction == 1 && (int)x > 72)
+					printGameStatus("$> Not valid choise! Enter again                             ", PLSTAT_MSG);
 				else break;
 				while (getchar() != '\n')continue;
 			}
 			fieldPoint[0] = y - 1;
 			fieldPoint[1] = turnInInt(x);
 			trying++;
-		} while (!handleShipPlace(3, field, playerFleet, direction, i));
+		} while (!manualShipPlace(3, field, playerFleet, direction, i,fieldPoint));
 		system("cls");
 		SetConsoleCursorPosition(Console, Position);
-		displayPole(PCfield, field, 0);
+		displayField(field, field, 0);
 	}
 	// two deck ship placing
 	for (int i = 0; i < 3; i++){
 		int y = 0;
-		char x = '\0';
-		printGameStatus("Choose direction of  two-deck ship: (1--Horisontal; 0--Vertical;)      ", NO_ARG);
+		char x = '\0';    
+		printGameStatus("Choose direction of  two-deck ship: (1--Horisontal; 0--Vertical;)        ", NO_ARG);
 		while (true){
 			scanf("%d", &direction);
 			if (direction > 1 || direction < 0){
 				printGameStatus("$> Not valid choise! Enter again                                 ",PLSTAT_MSG);
 			}
+
 			else break;
 			while (getchar() != '\n')continue;
 		}
@@ -361,6 +338,8 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 				if (y > 10 || y< 1){
 					printGameStatus("$> Not valid choise! Enter again                              ", PLSTAT_MSG);
 				}
+				else if (direction == 0 && y > 9)
+					printGameStatus("$> Not valid choise! Enter again                             ", PLSTAT_MSG);
 				else break;
 				while (getchar() != '\n')continue;
 			}
@@ -368,19 +347,21 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 			while (getchar() != '\n')continue;
 			while (true){
 				if (scanf("%c", &x) == 0)printGameStatus("$> Not valid choise! Enter again           ", PLSTAT_MSG);
-				if ((int)x < 65 || (int)x > 74){
-					printGameStatus("$> Not valid choise! Enter again                              ", PLSTAT_MSG);
+				if ((int)x < 65 || (int)x > 74){ 
+					printGameStatus("$> Not valid choise! Enter again                               ", PLSTAT_MSG);
 				}
+				else if (direction == 1 && (int)x > 73)
+					printGameStatus("$> Not valid choise! Enter again                              ", PLSTAT_MSG);
 				else break;
 				while (getchar() != '\n')continue;
 			}
 			fieldPoint[0] = y - 1;
 			fieldPoint[1] = turnInInt(x);
 			trying++;
-		} while (!handleShipPlace(2, field, playerFleet, direction, i));
+		} while (!manualShipPlace(2, field, playerFleet, direction, i, fieldPoint));
 		system("cls");
 		SetConsoleCursorPosition(Console, Position);
-		displayPole(PCfield, field, 0);
+		displayField(field, field, 0);
 	}
 	//one deck ship placing
 	for (int i = 0; i < 4; i++){
@@ -412,14 +393,16 @@ void playerShipsHandlePlacing(int field[][SIZE], FLEET * playerFleet, int PCfiel
 			fieldPoint[0] = y - 1;
 			fieldPoint[1] = turnInInt(x);
 			trying++;
-		} while (!handleShipPlace(1, field, playerFleet, -1, i));
+		} while (!manualShipPlace(1, field, playerFleet, -1, i,fieldPoint));
 		system("cls");
 		SetConsoleCursorPosition(Console, Position);
-		displayPole(PCfield, field, 0);
+		displayField(field, field, 0);
 	}
 }
 //*********************************
-bool handleShipPlace(int deck_count, int field[][SIZE], FLEET * currentFleet, int direction, int shipID){
+bool manualShipPlace(int deck_count, int field[][SIZE], FLEET * currentFleet, int direction, int shipID,int fieldPoint[]){
+
+
 	if (deck_count == 4){  //four deck ship without  collision detection
 		if (direction == HORISONT){
 			currentFleet->fourDeckShip.locationY[0] = (fieldPoint[0] + 1);
@@ -543,122 +526,7 @@ int turnInInt(char symb){
 	return result;
 }
 //********************************
-void displayPole(int PC_field[][SIZE], int player_field[][SIZE], int mode){
-	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
 
-	printf("\n%s", "  ABCDEFGHIJ");
-	if (mode == 1){
-		printf("\t\t\t\t");
-		printf("%s\n", "  ABCDEFGHIJ");
-	}
-	else
-	{
-		putchar('\n');
-	}
-	for (int i = 0; i < SIZE; i++){
-		
-		//*******player field**************
-		(i == 9 ? printf("%d", (i + 1)) : printf("%d ", (i + 1)));
 
-		for (int j = 0; j < SIZE; j++){
-			if (player_field[i][j] == 0){
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-				printf("%c", (char)176);   //SEA
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE|FOREGROUND_GREEN|FOREGROUND_RED);
-			}
-			else if (player_field[i][j] == 1 || player_field[i][j] == 2 || player_field[i][j] == 3 || player_field[i][j] == 4){
-				SetConsoleTextAttribute(Console, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-				printf("%c", 'S');  //SHIP
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-			}
-			else if (player_field[i][j] == 5){
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-				printf("%c", 'O');  // MISS
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-			}
-			else if (player_field[i][j] == 100){
-				SetConsoleTextAttribute(Console, FOREGROUND_RED | FOREGROUND_INTENSITY);
-				printf("%c", 'X');    //HIT
-				SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-			}
-		}
-		if (mode == 1){
-			//***********PC FIELD***************
-			printf("\t\t\t\t");
-			(i == 9 ? printf("%d", (i + 1)) : printf("%d ", (i + 1)));
-			for (int j = 0; j < SIZE; j++){
-				if (PC_field[i][j] == 100){
-					SetConsoleTextAttribute(Console, FOREGROUND_RED | FOREGROUND_INTENSITY);
-					printf("%c", 'X');  //HIT
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-				}
-				else if (PC_field[i][j] == 5){
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-					printf("%c", 'O');  //MISS
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-				}
 
-		     /* else if (PC_field[i][j] == 1 || PC_field[i][j] == 2 || PC_field[i][j] == 3 || PC_field[i][j] == 4){
-					SetConsoleTextAttribute(Console, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-					printf("%c", 'S');  //SHIP
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-				} */ 
-				// UNCOMENT TO SEE PC SHIPS <--------------<------<<---------|
-
-				else  {
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_INTENSITY);
-					printf("%c", (char)176);// SEA
-					SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-				}
-			}
-			//**************************
-		}
-
-		printf("\n");
-	}
-	printf("\n\n");
-}
-
-void printGameStatus(char * message, int mode)
-{
-	HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD Position_YX = {4,20};
-	
-	SetConsoleCursorPosition(Console, Position_YX);
-	if (mode == NO_ARG)
-	{
-		SetConsoleTextAttribute(Console,  FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-		printf(message, mode);
-		SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-	}
-	else if (mode == ACT_MSG){
-		Position_YX.Y--;
-		SetConsoleCursorPosition(Console, Position_YX);
-		SetConsoleTextAttribute(Console, FOREGROUND_RED | FOREGROUND_INTENSITY);
-		printf(message);
-		SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-	}
-	else if (mode == PLSTAT_MSG){
-		Position_YX.Y +=3;
-		SetConsoleCursorPosition(Console, Position_YX);
-		SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-		printf(message);
-		SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-	}
-	else if (mode == PCSTAT_MSG){
-		Position_YX.Y += 4;
-		SetConsoleCursorPosition(Console, Position_YX);
-		SetConsoleTextAttribute(Console, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
-		printf(message);
-		SetConsoleTextAttribute(Console, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
-	}
-	else if (mode == KILL_MSG){
-		Position_YX.Y += 5;
-		SetConsoleCursorPosition(Console, Position_YX);
-		printf(message);
-	}
-	else 
-	printf(message);
-	
-}
 	

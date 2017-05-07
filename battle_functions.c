@@ -1,4 +1,3 @@
-
 #include "header.h"
 
 
@@ -43,7 +42,7 @@ bool getPlayerShot(int PCfield[][SIZE], FLEET * PCships){
 	return  true;
 }
 //*******************************
-int gameMonitor(FLEET * playerShips, FLEET * PCships){
+bool gameMonitor(FLEET * playerShips, FLEET * PCships){
 	int  playerShipsAlive = 10;
 	int PCshipsAlive = 10;
 	// check for player ships
@@ -82,16 +81,16 @@ int gameMonitor(FLEET * playerShips, FLEET * PCships){
 		printGameStatus("NOBODY WINS                                              ", PCSTAT_MSG);
 		return false;
 	}
-	
+
 	if (PCshipsAlive == 0 && playerShipsAlive > 0){
-		printGameStatus("Player WINS!!!                                           ",PLSTAT_MSG);
+		printGameStatus("Player WINS!!!                                           ", PLSTAT_MSG);
 		return false;
 	}
-	 if (playerShipsAlive == 0 && PCshipsAlive > 0) {
+	if (playerShipsAlive == 0 && PCshipsAlive > 0) {
 		printGameStatus("PC WINS!!!                                              ", PCSTAT_MSG);
 		return false;
 	}
-	 return true;
+	return true;
 }
 
 //******************************

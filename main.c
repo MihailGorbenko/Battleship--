@@ -4,7 +4,7 @@ int main(){
 	srand(time(NULL));
 	bool autoPlacing = false;
 	int choise = -1;
-	// FIELDS  (100 -- HIT; | 1,2,3,4 -- SHIPS; | 0 -- SEA;)
+	// FIELDS  (5 -- MISS; | 100 -- HIT; | 1,2,3,4 -- SHIPS; | 0 -- SEA;)
 	int player_field[SIZE][SIZE] = { 0 };
 	int PC_field[SIZE][SIZE] = { 0 };
 	//************************
@@ -76,50 +76,50 @@ int main(){
 	switch (autoPlacing){
 	case true:
 	{
-		playerShipsAutoPlacing(player_field, playerShips);
-		PCshipsPlacing(PC_field, PCships);
+		autoShipsPlacing(player_field, playerShips);
+		autoShipsPlacing(PC_field, PCships);
 		SetConsoleCursorPosition(Console, Position);
-		displayPole(PC_field, player_field, 1);
+		displayField(PC_field, player_field, 1);
 		while (gameMonitor(playerShips, PCships)){
 			int shotByShot = 0;                    // if > than one to try to guess next deck of this ship
 			while (gameMonitor(playerShips, PCships) && getPlayerShot(PC_field, PCships)){
 				SetConsoleCursorPosition(Console, Position);
-				displayPole(PC_field, player_field, 1);
+				displayField(PC_field, player_field, 1);
 			}
 			while (gameMonitor(playerShips, PCships) && getPCshot(player_field, playerShips, shotByShot)){
 				
 				SetConsoleCursorPosition(Console, Position);
-				displayPole(PC_field, player_field, 1);
+				displayField(PC_field, player_field, 1);
 				shotByShot++;
 			}
 			system("cls");
 			SetConsoleCursorPosition(Console, Position);
-			displayPole(PC_field, player_field, 1);
+			displayField(PC_field, player_field, 1);
 		}
 		break;
 	}
 	////--------------------------------------------
 	case false:
 	{
-		playerShipsHandlePlacing(player_field, playerShips, PC_field);
-		PCshipsPlacing(PC_field, PCships);
+		playerShipsManualPlacing(player_field, playerShips, PC_field);
+		autoShipsPlacing(PC_field, PCships);
 		SetConsoleCursorPosition(Console, Position);
-		displayPole(PC_field, player_field, 1);
+		displayField(PC_field, player_field, 1);
 		while (gameMonitor(playerShips, PCships)){
 			int shotByShot = 0;
 			
 			while (gameMonitor(playerShips, PCships) && getPlayerShot(PC_field, PCships)){
 				SetConsoleCursorPosition(Console, Position);
-				displayPole(PC_field, player_field, 1);
+				displayField(PC_field, player_field, 1);
 			}
 			while (gameMonitor(playerShips, PCships) && getPCshot(player_field, playerShips, shotByShot)){
 				SetConsoleCursorPosition(Console, Position);
-				displayPole(PC_field, player_field, 1);
+				displayField(PC_field, player_field, 1);
 				shotByShot++;
 			}
 			system("cls");
 			SetConsoleCursorPosition(Console, Position);
-			displayPole(PC_field, player_field, 1);
+			displayField(PC_field, player_field, 1);
 		}
 		break;
 	}
